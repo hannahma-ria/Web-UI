@@ -15,6 +15,9 @@ const layoutToColumns = {
 const POSTS_PER_PAGE = 12;
 const SUBREDDIT = 'data';
 
+// Add this constant at the top of your file
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+
 export default function RDataFeed() {
   useEffect(() => {
     document.title = 'Protegrity Feed - Latest Data Posts';
@@ -40,7 +43,7 @@ export default function RDataFeed() {
 
     async function fetchLayout(screenWidth) {
       try {
-        const res = await fetch('/api/layout', {
+        const res = await fetch(`${API_BASE}/api/layout`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ screenWidth }),
@@ -71,24 +74,25 @@ export default function RDataFeed() {
     setLoading(true);
     setError(null);
     try {
-      const url = token ? `/api/reddit-posts?after=${token}` : `/api/reddit-posts`;
+      const url = token 
+        ? `${API_BASE}/api/reddit-posts?after=${token}` 
+        : `${API_BASE}/api/reddit-posts`;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`Failed to fetch posts: ${res.status}`);
       const data = await res.json();
 
       const items = (data?.data?.children || []).map(c => {
-      const previewImage = c.data.preview?.images?.[0]?.source?.url?.replace(/&amp;/g, '&');
-      return {
-        id: c.data.id,
-        title: c.data.title,
-        selftext: c.data.selftext || '',
-        author: c.data.author,
-        num_comments: c.data.num_comments,
-        permalink: `https://reddit.com${c.data.permalink}`,
-        thumbnail: previewImage || (c.data.thumbnail && c.data.thumbnail.startsWith('http') ? c.data.thumbnail : null),
-      };
-    });
-
+        const previewImage = c.data.preview?.images?.[0]?.source?.url?.replace(/&amp;/g, '&');
+        return {
+          id: c.data.id,
+          title: c.data.title,
+          selftext: c.data.selftext || '',
+          author: c.data.author,
+          num_comments: c.data.num_comments,
+          permalink: `https://reddit.com${c.data.permalink}`,
+          thumbnail: previewImage || (c.data.thumbnail && c.data.thumbnail.startsWith('http') ? c.data.thumbnail : null),
+        };
+      });
 
       if (mountedRef.current) {
         setPosts(items);
@@ -127,7 +131,7 @@ export default function RDataFeed() {
     setIsSending(true);
 
     try {
-      const response = await fetch('/chat', {
+      const response = await fetch(`${API_BASE}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: chatInput }),
@@ -142,7 +146,6 @@ export default function RDataFeed() {
     }
   }
   
-
   function handleLogoClick(e) {
     e.preventDefault();
     setBeforeStack([]);
@@ -152,21 +155,6 @@ export default function RDataFeed() {
     <main className={`app layout-${layoutVariant}`}>
       {/* NAV */}
       <Navbar onLogoClick={handleLogoClick} />
-      {/* <nav className="header">
-        <div className="header-left">
-          <div>
-            <a href="/" onClick={() => setBeforeStack([])}>
-              <img src="/protegrity-logo.svg" alt="Protegrity Logo" className="logo" />
-            </a>
-          </div>
-          <a href="/" onClick={() => setBeforeStack([])}>Protegrity Feed</a>
-        </div>
-        <button className="button">
-        <a href="https://www.protegrity.com/" target="_blank" rel="noreferrer noopener">
-          Visit Protegrity.com
-        </a>
-        </button>
-      </nav> */}
 
       {/* POSTS FEED */}
       <section className="feed-section">
@@ -222,7 +210,7 @@ export default function RDataFeed() {
         onClick={() => setChatOpen(open => !open)}
         aria-label="Toggle chat"
       >
-        <img src="/public/chat.png" alt="Chat Icon" className="chat-icon" />
+        <img src="/chat.png" alt="Chat Icon" className="chat-icon" />
       </button>
       
 
@@ -262,25 +250,6 @@ export default function RDataFeed() {
 
       {/* FOOTER */}
       <Footer />
-      {/* <footer className="footer" role="contentinfo">
-        <div className="footer-top">
-          <div className="footer-left">
-            <img src="/footer-logo.svg" alt="Footer Logo" className="logo" />
-          </div>
-          <div className="footer-right">
-            <a href="https://twitter.com/Protegrity" target="_blank" rel="noopener noreferrer" aria-label="Protegrity Twitter">
-              <img src="/X.png" alt="X" className="socials" />
-            </a>
-            <a href="https://www.linkedin.com/company/protegrity/" target="_blank" rel="noopener noreferrer" aria-label="Protegrity LinkedIn">
-              <img src="/Linkedin.webp" alt="Ln" className="socials" />
-            </a>
-          </div>
-        </div>
-        <div className="footer-bottom">
-          <div>© {new Date().getFullYear()} Protegrity</div>
-        </div>
-      </footer>
-      */}
     </main>
   );
 }

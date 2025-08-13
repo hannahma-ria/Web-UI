@@ -17,8 +17,5 @@ export default defineConfig({
       }
     }
   },
-  // Add this for Vercel deployment
-  build: {
-    outDir: 'dist'
-  }
+  
 })
