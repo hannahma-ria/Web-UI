@@ -16,7 +16,7 @@
   gap: 40px;
 }
 
-.header-left a:hover{
+.header-left a:hover {
   color: #FA5A25;
 }
 
@@ -34,4 +34,25 @@
   margin-right: auto;
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  border-radius: 99px;
+  background: #373737;
+  color: white;
+  cursor: pointer;
+  border: 1px solid transparent;
+  font-size: 1em;
+  font-family: inherit;
+  background-clip: padding-box;
+}
+
+button a {
+  color: white;
+}
+
+
+button:hover {
+  background-image: linear-gradient(to right, #FA5A25, #373737);
 }

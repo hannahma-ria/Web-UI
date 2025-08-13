@@ -3,44 +3,52 @@ import './styling/App.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
+// Define responsive layout columns for different screen sizes
 const layoutToColumns = {
-  xs: 1,
-  sm: 1,
-  md: 2,
-  lg: 3,
-  xl: 4,
-  xxl: 4,
+  xs: 1,  // Mobile portrait
+  sm: 1,  // Mobile landscape
+  md: 2,  // Tablets
+  lg: 3,  // Small laptops
+  xl: 4,  // Desktops
+  xxl: 4, // Large screens
 };
 
+// App configuration constants
 const POSTS_PER_PAGE = 12;
 const SUBREDDIT = 'data';
 
-// Add this constant at the top of your file
+// API base URL from environment variables with fallback
 const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function RDataFeed() {
+  // Set page title when component mounts
   useEffect(() => {
     document.title = 'Protegrity Feed - Latest Data Posts';
   }, []);
 
+  // State management for posts, loading, and errors
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [after, setAfter] = useState(null);
-  const [beforeStack, setBeforeStack] = useState([]);
+  const [after, setAfter] = useState(null); // For Reddit pagination
+  const [beforeStack, setBeforeStack] = useState([]); // Navigation history
 
+  // Chat functionality states
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState('');
   const [isSending, setIsSending] = useState(false);
 
+  // UI states
   const [layoutVariant, setLayoutVariant] = useState('desktop');
   const [chatOpen, setChatOpen] = useState(false);
 
+  // Track mounted state to prevent memory leaks
   const mountedRef = useRef(false);
 
   useEffect(() => {
     mountedRef.current = true;
 
+    // Determine responsive layout based on screen width
     async function fetchLayout(screenWidth) {
       try {
         const res = await fetch(`${API_BASE}/api/layout`, {
@@ -58,29 +66,34 @@ export default function RDataFeed() {
       }
     }
 
+    // Initial setup
     fetchLayout(window.innerWidth);
     fetchPage();
 
+    // Handle window resize events
     const onResize = () => fetchLayout(window.innerWidth);
     window.addEventListener('resize', onResize);
 
+    // Cleanup function
     return () => {
       mountedRef.current = false;
       window.removeEventListener('resize', onResize);
     };
   }, []);
 
+  // Fetch posts from Reddit API
   async function fetchPage(token = null) {
     setLoading(true);
     setError(null);
     try {
-      const url = token 
-        ? `${API_BASE}/api/reddit-posts?after=${token}` 
+      const url = token
+        ? `${API_BASE}/api/reddit-posts?after=${token}`
         : `${API_BASE}/api/reddit-posts`;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`Failed to fetch posts: ${res.status}`);
       const data = await res.json();
 
+      // Process and format post data
       const items = (data?.data?.children || []).map(c => {
         const previewImage = c.data.preview?.images?.[0]?.source?.url?.replace(/&amp;/g, '&');
         return {
@@ -105,12 +118,14 @@ export default function RDataFeed() {
     }
   }
 
+  // Handle pagination - next page
   async function handleNext() {
     if (!after) return;
     setBeforeStack(s => [...s, after]);
     await fetchPage(after);
   }
 
+  // Handle pagination - previous page
   async function handlePrev() {
     const stack = [...beforeStack];
     if (stack.length <= 1) {
@@ -124,6 +139,7 @@ export default function RDataFeed() {
     await fetchPage(prevToken);
   }
 
+  // Send chat message
   async function sendMessage() {
     if (!chatInput.trim()) return;
 
@@ -145,7 +161,8 @@ export default function RDataFeed() {
       setIsSending(false);
     }
   }
-  
+
+  // Reset pagination on logo click
   function handleLogoClick(e) {
     e.preventDefault();
     setBeforeStack([]);
@@ -153,17 +170,18 @@ export default function RDataFeed() {
 
   return (
     <main className={`app layout-${layoutVariant}`}>
-      {/* NAV */}
+      {/* Navigation bar */}
       <Navbar onLogoClick={handleLogoClick} />
 
-      {/* POSTS FEED */}
+      {/* Main content area */}
       <section className="feed-section">
         <div className="banner">
-        <h2 className="description">
-          Showing the latest posts from /r/data. Click a post to open the full Reddit thread in a new tab.
-        </h2>
+          <h2 className="description">
+            Showing the latest posts from /r/data. Click a post to open the full Reddit thread in a new tab.
+          </h2>
         </div>
 
+        {/* Posts grid with responsive layout */}
         <div
           className="posts-grid"
           style={{
@@ -196,25 +214,28 @@ export default function RDataFeed() {
           ))}
         </div>
 
-        {/* PAGINATION */}
+        {/* Pagination controls */}
         <div className="pagination">
-          <button onClick={handlePrev} disabled={loading || beforeStack.length === 0} aria-label="Previous posts"><b>← Previous</b></button>
+          <button onClick={handlePrev} disabled={loading || beforeStack.length === 0} aria-label="Previous posts">
+            <b>← Previous</b>
+          </button>
           <div>Page {beforeStack.length + 1}</div>
-          <button onClick={handleNext} disabled={!after || loading} aria-label="Next posts"><b>Next →</b></button>
+          <button onClick={handleNext} disabled={!after || loading} aria-label="Next posts">
+            <b>Next →</b>
+          </button>
         </div>
       </section>
 
-      {/* Floating Chat Icon */}
+      {/* Floating chat toggle button */}
       <button
         className="chat-toggle-btn"
         onClick={() => setChatOpen(open => !open)}
         aria-label="Toggle chat"
       >
-        <img src="/chat.png" alt="Chat Icon" className="chat-icon" />
+        <img src="/Chat.png" alt="Chat Icon" className="chat-icon" />
       </button>
-      
 
-      {/* Chatbot panel */}
+      {/* Chat panel (conditionally rendered) */}
       {chatOpen && (
         <section className="chatbot-section" aria-label="Chatbot panel">
           <div id="chat-container">
@@ -248,7 +269,7 @@ export default function RDataFeed() {
         </section>
       )}
 
-      {/* FOOTER */}
+      {/* Footer section */}
       <Footer />
     </main>
   );
