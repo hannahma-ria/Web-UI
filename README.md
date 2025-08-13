@@ -33,6 +33,25 @@ Integrate a simple chatbot interface and connect it to an AI API
 Code Reference: See server.js
 ![chat](image-2.png)
 
+## OpenAI
+- If I had access to OpenAI’s API, I would replace the mock AI logic in server.js with a real API call.
+Instead of returning a hardcoded mock response, the /chat endpoint would send the user’s message to OpenAI and return the AI-generated reply.
+example code:
+
+app.post('/chat', async (req, res) => {
+  const userMessage = req.body.message || '';
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: userMessage }]
+    });
+
+    const aiReply = completion.choices[0].message.content;
+    res.json({ reply: aiReply });
+  } 
+});
+
 
 ## Testing
 - I used https://webaim.org/resources/contrastchecker/
