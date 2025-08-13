@@ -16,7 +16,7 @@ const POSTS_PER_PAGE = 12;
 const SUBREDDIT = 'data';
 
 // Add this constant at the top of your file
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function RDataFeed() {
   useEffect(() => {

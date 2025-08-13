@@ -10,15 +10,25 @@ app.use(bodyParser.json());
 
 let requestCount = 0;
 
-const corsOptions = {
-  origin: [
-    'http://localhost:5173',
-    'https://web-ui-nine-blond.vercel.app/'
-     // for local development
-  ],
-  optionsSuccessStatus: 200
-};
-app.use(cors(corsOptions));
+const allowedOrigins = [
+  'https://web-ui-nine-blond.vercel.app',
+  'http://localhost:5173'
+];
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+  credentials: true
+}));
+
+// Add pre-flight OPTIONS handler
+app.options('*', cors());
 
 
 function predictResourceAllocation(requestCount) {
@@ -98,6 +108,6 @@ app.post('/api/layout', (req, res) => {
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Backend running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
