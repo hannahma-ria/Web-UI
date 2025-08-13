@@ -127,7 +127,7 @@ export default function RDataFeed() {
     setIsSending(true);
 
     try {
-      const response = await fetch('/chat', {
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: chatInput }),
@@ -141,6 +141,7 @@ export default function RDataFeed() {
       setIsSending(false);
     }
   }
+  
 
   function handleLogoClick(e) {
     e.preventDefault();
