@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
+<<<<<<< HEAD
       '/api': {
         target: 'http://localhost:4000',
         changeOrigin: true,
@@ -22,3 +23,10 @@ export default defineConfig({
     outDir: 'dist'
   }
 })
+=======
+      '/api': 'http://localhost:4000',
+      '/chat': 'http://localhost:4000',
+    }
+  }
+})
+>>>>>>> ed1b09fa08a1c4a3cc71c9c4495500dc2d36dc07

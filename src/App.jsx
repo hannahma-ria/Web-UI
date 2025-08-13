@@ -222,7 +222,11 @@ export default function RDataFeed() {
         onClick={() => setChatOpen(open => !open)}
         aria-label="Toggle chat"
       >
+<<<<<<< HEAD
         <img src="/public/chat.png" alt="Chat Icon" className="chat-icon" />
+=======
+        <img src="/chat.png" alt="Chat Icon" className="chat-icon" />
+>>>>>>> ed1b09fa08a1c4a3cc71c9c4495500dc2d36dc07
       </button>
       
 
