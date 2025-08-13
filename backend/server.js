@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-
+import fetch from 'node-fetch';
 
 const app = express();
 app.use(cors());
