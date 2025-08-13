@@ -15,7 +15,19 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
+      "src": "/api/reddit-posts",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/api/predict",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/api/reset",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/api/layout",
       "dest": "/server.js"
     },
     {
@@ -24,7 +36,10 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/dist/$1"
+      "dest": "/dist/$1",
+      "headers": {
+        "Cache-Control": "s-maxage=0"
+      }
     }
   ]
 }

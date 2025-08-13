@@ -81,4 +81,4 @@ app.listen(PORT, () => {
   console.log(`Backend running on http://localhost:${PORT}`);
 });
 
-export default app;
+module.exports = app;
