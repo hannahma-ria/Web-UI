@@ -5,6 +5,7 @@
 2. `cd Web-UI && npm install && npm run dev` (runs on http://localhost:5173)
 
 ## Features Demonstrated
+- Reddit post cards
 - Design Optimization
 - Performance Improvements
 - Interactive User Experience
