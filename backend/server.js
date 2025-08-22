@@ -92,7 +92,7 @@ app.post('/api/reset', (req, res) => {
  * - Simulates AI response for demo purposes
  * - Returns echoed user message with mock prefix
  */
-app.post('/chat', (req, res) => {
+app.post('/api/chat', (req, res) => {
     const userMessage = req.body.message || '';
     const reply = `You said: "${userMessage}". This is a mock AI response for demo purposes.`;
     res.json({ reply });
