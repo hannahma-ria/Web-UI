@@ -83,41 +83,57 @@ export default function RDataFeed() {
   }, []);
 
   // Fetch posts from Reddit API
-  async function fetchPage(token = null) {
-    setLoading(true);
-    setError(null);
-    try {
-      const url = token
-        ? `${API_BASE}/api/reddit-posts?after=${token}`
-        : `${API_BASE}/api/reddit-posts`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`Failed to fetch posts: ${res.status}`);
-      const data = await res.json();
+  // Fetch posts from Reddit API safely
+async function fetchPage(token = null) {
+  setLoading(true);
+  setError(null);
 
-      // Process and format post data
-      const items = (data?.data?.children || []).map(c => {
-        const previewImage = c.data.preview?.images?.[0]?.source?.url?.replace(/&amp;/g, '&');
-        return {
-          id: c.data.id,
-          title: c.data.title,
-          selftext: c.data.selftext || '',
-          author: c.data.author,
-          num_comments: c.data.num_comments,
-          permalink: `https://reddit.com${c.data.permalink}`,
-          thumbnail: previewImage || (c.data.thumbnail && c.data.thumbnail.startsWith('http') ? c.data.thumbnail : null),
-        };
-      });
+  try {
+    const url = token
+      ? `/api/reddit-posts?after=${token}`
+      : `/api/reddit-posts`;
 
-      if (mountedRef.current) {
-        setPosts(items);
-        setAfter(data?.data?.after || null);
-      }
-    } catch (err) {
-      if (mountedRef.current) setError(err.message);
-    } finally {
-      if (mountedRef.current) setLoading(false);
+    const res = await fetch(url);
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error('Reddit fetch failed:', res.status, text);
+      throw new Error(`Failed to fetch posts (status ${res.status})`);
     }
+
+    const data = await res.json();
+
+    // Make sure data structure exists
+    const items = Array.isArray(data?.data?.children)
+      ? data.data.children.map(c => {
+          const previewImage = c.data.preview?.images?.[0]?.source?.url?.replace(/&amp;/g, '&');
+          return {
+            id: c.data.id,
+            title: c.data.title,
+            selftext: c.data.selftext || '',
+            author: c.data.author,
+            num_comments: c.data.num_comments,
+            permalink: `https://reddit.com${c.data.permalink}`,
+            thumbnail:
+              previewImage ||
+              (c.data.thumbnail && c.data.thumbnail.startsWith('http') ? c.data.thumbnail : null),
+          };
+        })
+      : [];
+
+    if (mountedRef.current) {
+      setPosts(items);
+      setAfter(data?.data?.after || null);
+    }
+  } catch (err) {
+    console.error('Error fetching Reddit posts:', err);
+    if (mountedRef.current)
+      setError('Unable to load posts at the moment. Please try again later.');
+  } finally {
+    if (mountedRef.current) setLoading(false);
   }
+}
+
 
   // Handle pagination - next page
   async function handleNext() {
