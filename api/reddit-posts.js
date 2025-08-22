@@ -13,12 +13,15 @@ export default async function handler(req, res) {
       },
     });
 
+    console.log('Reddit status code:', redditRes.status);
+    const text = await redditRes.text();
+    console.log('Reddit response text:', text.substring(0, 500)); // log first 500 chars
+
     if (!redditRes.ok) {
-      console.error('Reddit fetch failed with status:', redditRes.status);
       throw new Error(`Reddit API error: ${redditRes.status}`);
     }
 
-    const data = await redditRes.json();
+    const data = JSON.parse(text);
     res.status(200).json(data);
   } catch (error) {
     console.error('Reddit fetch error:', error);
