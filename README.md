@@ -10,6 +10,11 @@
 - Performance Improvements
 - Interactive User Experience
 
+## Reddit Integration
+- Uses Reddit’s official API with OAuth2 to avoid rate limits and 403/500 errors.
+- OAuth credentials are required as environment variables (REDDIT_CLIENT_ID, REDDIT_SECRET) when deployed to Vercel or other hosting platforms.
+- Secure server-side fetching ensures Reddit credentials are never exposed to the frontend.
+
 ## AI Contribution
 1. Responsive Design Enhancement
 Purpose: Ensure an optimal layout for different devices and screen sizes.
@@ -66,9 +71,5 @@ To help ensure there is enough contrast, it helped me realize I need to bold the
 - https://www.loom.com/share/80bb77e413fb432392df76b7f7f2314f?sid=bff1be5b-a646-4ddd-a103-b8bf80529c61
 
 ### Note on Deployment  
-The app runs perfectly locally in both frontend/backend.  
-I attempted deployment to Render/Vercel but hit service limitations (CORS/502).  
-Here’s how I’d fix it in production:  
-- Use a paid Render tier for reliability  
-- Implement a CDN cache for Reddit API responses  
-- Add retry logic for timeouts   
+- The app runs perfectly locally in both frontend/backend.  
+- Vercel Deployment: Now works with Reddit OAuth environment variables.
