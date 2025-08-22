@@ -18,8 +18,7 @@ const POSTS_PER_PAGE = 12;
 const SUBREDDIT = 'data';
 
 // API base URL from environment variables with fallback
-// const API_BASE = import.meta.env.VITE_API_BASE;
-const API_BASE = '';
+const API_BASE = import.meta.env.VITE_API_BASE || '';
 
 export default function RDataFeed() {
   // Set page title when component mounts
