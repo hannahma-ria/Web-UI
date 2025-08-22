@@ -8,7 +8,6 @@ export default async function handler(req, res) {
   try {
     const after = req.query.after || '';
     const url = `https://www.reddit.com/r/data/hot.json?limit=12&after=${after}`;
-
     const redditRes = await fetch(url);
     if (!redditRes.ok) throw new Error(`Reddit API error: ${redditRes.status}`);
 
