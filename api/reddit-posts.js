@@ -7,8 +7,16 @@ export default async function handler(req, res) {
     const after = req.query.after || '';
     const url = `https://www.reddit.com/r/data/hot.json?limit=12&after=${after}`;
 
-    const redditRes = await fetch(url); // native fetch
-    if (!redditRes.ok) throw new Error(`Reddit API error: ${redditRes.status}`);
+    const redditRes = await fetch(url, {
+      headers: {
+        'User-Agent': 'ProtegrityFeed/1.0 (+https://yourdomain.com)',
+      },
+    });
+
+    if (!redditRes.ok) {
+      console.error('Reddit fetch failed with status:', redditRes.status);
+      throw new Error(`Reddit API error: ${redditRes.status}`);
+    }
 
     const data = await redditRes.json();
     res.status(200).json(data);
