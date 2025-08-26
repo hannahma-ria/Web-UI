@@ -55,18 +55,41 @@ function predictResourceAllocation(requestCount) {
  */
 app.get('/api/reddit-posts', async (req, res) => {
     try {
-        const after = req.query.after || ''; // Pagination token
+        const after = req.query.after || '';
         const url = `https://www.reddit.com/r/data/hot.json?limit=12&after=${after}`;
 
-        const redditRes = await fetch(url);
-        if (!redditRes.ok) throw new Error(`Reddit API error: ${redditRes.status}`);
+        console.log('Attempting to fetch from Reddit:', url);
+
+        // Add proper headers that Reddit expects
+        const redditRes = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'Accept': 'application/json',
+                'Accept-Language': 'en-US,en;q=0.9'
+            },
+            timeout: 10000
+        });
+
+        console.log('Reddit response status:', redditRes.status, redditRes.statusText);
+
+        if (!redditRes.ok) {
+            // Try to get more error details
+            const errorText = await redditRes.text();
+            console.error('Reddit API error response:', errorText);
+            throw new Error(`Reddit API error: ${redditRes.status} - ${redditRes.statusText}`);
+        }
 
         const data = await redditRes.json();
-        res.json(data); // Forward Reddit's response
+        console.log('Success! Fetched', data.data.children.length, 'posts');
+        res.json(data);
 
     } catch (error) {
-        console.error('Reddit fetch error:', error);
-        res.status(500).json({ error: 'Failed to fetch Reddit posts' });
+        console.error('Full error details:', error.message);
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ 
+            error: 'Failed to fetch Reddit posts',
+            details: error.message
+        });
     }
 });
 
