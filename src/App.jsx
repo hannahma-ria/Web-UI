@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import './styling/App.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import Icon from '../public/protegrity-logo.svg';
 
 // Define responsive layout columns for different screen sizes
 const layoutToColumns = {
@@ -25,6 +26,10 @@ export default function RDataFeed() {
   // Set page title when component mounts
   useEffect(() => {
     document.title = 'Protegrity Feed - Latest Data Posts';
+    const favicon = document.getElementById('favicon');
+        if (favicon) {
+          favicon.setAttribute('href', Icon); // Set the new favicon path
+        }
   }, []);
 
   // State management for posts, loading, and errors

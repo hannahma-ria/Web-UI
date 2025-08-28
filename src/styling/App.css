@@ -99,7 +99,7 @@
 .pagination button {
   padding: 0.5rem 1rem;
   border-radius: 99px;
-  background: #FA5A25;
+  background: var(--orange2);
   color: white;
   cursor: pointer;
   border: 1px solid transparent;

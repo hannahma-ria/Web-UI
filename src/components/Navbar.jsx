@@ -21,9 +21,10 @@ export default function Navbar({ onLogoClick }) {
             />
           </a>
         </div>
-        {/* App title that also resets the feed */}
-        <a href="/" onClick={onLogoClick}>Protegrity Feed</a>
+        
       </div>
+      {/* App title that also resets the feed */}
+        <a href="/" onClick={onLogoClick}>Protegrity Feed</a>
 
       {/* External link button to main company site */}
       <button className="button">
